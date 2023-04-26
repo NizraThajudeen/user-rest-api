@@ -41,18 +41,12 @@ public class UserController {
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-//    @PutMapping("/users/{id}")
-//    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long userId, @RequestBody UserDto user){
-//        user.setId(userId);
-//        UserDto updatedUser = service.updateUser(user);
-//        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-//    }
-@PutMapping("/users")
-public ResponseEntity<UserDto> updateUser( @RequestBody UserDto user){
-    user.setId(user.getId());
-    UserDto updatedUser = service.updateUser(user);
-    return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-}
+    @PutMapping("/users")
+    public ResponseEntity<UserDto> updateUser( @RequestBody UserDto user){
+        user.setId(user.getId());
+        UserDto updatedUser = service.updateUser(user);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId){
@@ -63,7 +57,6 @@ public ResponseEntity<UserDto> updateUser( @RequestBody UserDto user){
     @GetMapping("users/query")
     public UserDto filterByName( @RequestParam (name="name") @NotBlank String name){
         UserDto user = service.filterUserByName(name);
-//        return "Hello, " + name + "!";
         return user;
     }
 

@@ -2,7 +2,7 @@ package lentra.test.userrestapi.service;
 
 import lentra.test.userrestapi.dto.UserDto;
 import lentra.test.userrestapi.entity.User;
-import lentra.test.userrestapi.exception.ResourceNotFoundException;
+import lentra.test.userrestapi.exception.UserNotFoundException;
 //import lentra.test.userrestapi.mapper.UserMapper;
 import lentra.test.userrestapi.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -39,14 +39,11 @@ public class UserServiceImpl implements UserService{
         }
         return userDtos;
 
-//        return users.stream().map(user ->modalMapper.map(user, UserDto.class))
-//                .collect(Collectors.toList());
-
     }
 
     @Override
     public UserDto getUserById(Long userId){
-        Optional<User> optionalUser = Optional.ofNullable(repository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user with given id does not exist")));
+        Optional<User> optionalUser = Optional.ofNullable(repository.findById(userId).orElseThrow(() -> new UserNotFoundException("user with given id does not exist")));
         User user = optionalUser.get();
 
         UserDto userDto = modalMapper.map(user, UserDto.class);
@@ -79,7 +76,7 @@ public class UserServiceImpl implements UserService{
 
         }
         else
-            throw new ResourceNotFoundException("cannot find a resource with id "+user.getId()+" for update operation");
+            throw new UserNotFoundException("cannot find a resource with id "+user.getId()+" for update operation");
 
     }
 
@@ -90,7 +87,7 @@ public class UserServiceImpl implements UserService{
         if(user.isPresent()) {
             repository.deleteById(userId);
         } else{
-            throw new ResourceNotFoundException("cannot find a user with id "+userId);
+            throw new UserNotFoundException("cannot find a user with id "+userId);
         }
     }
 
