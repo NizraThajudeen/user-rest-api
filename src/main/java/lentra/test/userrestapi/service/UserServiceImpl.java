@@ -7,6 +7,8 @@ import lentra.test.userrestapi.exception.ResourceNotFoundException;
 import lentra.test.userrestapi.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,8 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private ModelMapper modalMapper;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
     public List<UserDto> getAllUsers(){
@@ -52,7 +56,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDto createUser(UserDto userDto){
         // Convert UserDto into User JPA Entity
-        System.out.println("dto name"+userDto.getName());
+//        System.out.println("dto name");
+        LOGGER.info("logger " );
         User user = modalMapper.map(userDto, User.class);
         User savedUser = repository.save(user);
         // Convert User JPA entity to UserDto
@@ -63,19 +68,31 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto updateUser(UserDto user){
-        User existingUser = repository.findById(user.getId()).get();
-        existingUser.setName(user.getName());
-        existingUser.setAge(user.getAge());
-        existingUser.setEmail(user.getEmail());
-        User updatedUser = repository.save(existingUser);
-        UserDto updatedUserDto = modalMapper.map(updatedUser, UserDto.class);
-        return updatedUserDto;
+        Optional<User> optionalUserEntity = repository.findById(user.getId());
+        if(optionalUserEntity.isPresent()) {
+            User userEntity = optionalUserEntity.get();
+            userEntity.setName(user.getName());
+            userEntity.setAge(user.getAge());
+            userEntity.setEmail(user.getEmail());
+            User updatedUser = repository.save(userEntity);
+            UserDto updatedUserDto = modalMapper.map(updatedUser, UserDto.class);
+            return updatedUserDto;
+
+        }
+        else
+            throw new ResourceNotFoundException("cannot find a resource with id "+user.getId()+" for update operation");
 
     }
 
     @Override
     public void deleteUser(Long userId){
-        repository.deleteById(userId);
+//        repository.deleteById(userId);
+        Optional<User> user = repository.findById(userId);
+        if(user.isPresent()) {
+            repository.deleteById(userId);
+        } else{
+            throw new ResourceNotFoundException("cannot find a user with id "+userId);
+        }
     }
 
     @Override
