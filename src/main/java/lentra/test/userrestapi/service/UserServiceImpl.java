@@ -56,7 +56,6 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDto createUser(UserDto userDto){
         // Convert UserDto into User JPA Entity
-//        System.out.println("dto name");
         LOGGER.info("logger " );
         User user = modalMapper.map(userDto, User.class);
         User savedUser = repository.save(user);
