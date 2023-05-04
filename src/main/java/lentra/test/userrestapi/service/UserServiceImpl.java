@@ -53,11 +53,12 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDto createUser(UserDto userDto){
         // Convert UserDto into User JPA Entity
-        LOGGER.info("logger " );
+
         User user = modalMapper.map(userDto, User.class);
         User savedUser = repository.save(user);
         // Convert User JPA entity to UserDto
         UserDto savedUserDto = modalMapper.map(savedUser, UserDto.class);
+        LOGGER.info(savedUserDto.getName()+ " has been created successfully");
 
         return savedUserDto;
     }
@@ -72,11 +73,16 @@ public class UserServiceImpl implements UserService{
             userEntity.setEmail(user.getEmail());
             User updatedUser = repository.save(userEntity);
             UserDto updatedUserDto = modalMapper.map(updatedUser, UserDto.class);
+            LOGGER.info(updatedUserDto.getName()+ " has been updated successfully");
             return updatedUserDto;
 
         }
-        else
+        else{
+            LOGGER.error("Failed to update user "+user.getName());
             throw new UserNotFoundException("cannot find a resource with id "+user.getId()+" for update operation");
+        }
+
+
 
     }
 
@@ -86,7 +92,9 @@ public class UserServiceImpl implements UserService{
         Optional<User> user = repository.findById(userId);
         if(user.isPresent()) {
             repository.deleteById(userId);
+            LOGGER.info("User with given id has been deleted successfully");
         } else{
+            LOGGER.error("cannot find a user with id "+userId);
             throw new UserNotFoundException("cannot find a user with id "+userId);
         }
     }

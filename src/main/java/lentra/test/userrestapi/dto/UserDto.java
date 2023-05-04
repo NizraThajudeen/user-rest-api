@@ -15,12 +15,12 @@ import lombok.*;
 public class UserDto {
 
     private Long id;
-    @NotBlank
-    @Size(min = 5, max = 15)
+    @NotBlank(message = "stringValue has to be present")
+    @Size(max = 15, message = "size violation")
     private String name;
     private int age;
 
-    @NotBlank
+    @NotBlank(message = "stringValue has to be present")
     @Email
     private String email;
 
