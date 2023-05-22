@@ -5,8 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import lentra.test.userrestapi.dto.UserDto;
 import lentra.test.userrestapi.entity.User;
 import lentra.test.userrestapi.service.UserService;
+import lentra.test.userrestapi.service.UserServiceImpl;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,12 +24,28 @@ import java.util.List;
 @Validated
 public class UserController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService service;
+
+    public String getProfileValue() {
+        return profileValue;
+    }
+
+    public void setProfileValue(String profileValue) {
+        this.profileValue = profileValue;
+    }
+
+    @Value("${spring.application.name}")
+    private String profileValue;
+
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers(){
         List<UserDto> users = service.getAllUsers();
+        LOGGER.info("info "+getProfileValue());
+        LOGGER.debug("debug"+getProfileValue());
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

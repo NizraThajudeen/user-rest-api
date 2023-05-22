@@ -5,12 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -18,14 +16,30 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @NotBlank
+
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private int age;
-//    @NotBlank
+
     @Column(nullable = false, unique = true)
     private String email;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn( referencedColumnName = "id")
+    private UserAddress address;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_courses",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "course_id", referencedColumnName = "id"
+            )
+    )
+    private Set<Course> courses = new HashSet<>();
 
 
     public Long getId() {
@@ -60,32 +74,44 @@ public class User {
         this.email = email;
     }
 
+    public UserAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(UserAddress address) {
+        this.address = address;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return age == user.age && Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+        return age == user.age && Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(address, user.address) && Objects.equals(courses, user.courses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, email);
+        return Objects.hash(id, name, age, email, address, courses);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", Name='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", age=" + age +
                 ", email='" + email + '\'' +
+                ", address=" + address +
+                ", courses=" + courses +
                 '}';
     }
-
-
-
-
-
-
 }

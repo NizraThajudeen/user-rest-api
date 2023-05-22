@@ -33,6 +33,8 @@ public class UserServiceImpl implements UserService{
     public List<UserDto> getAllUsers(){
         List<User> users = repository.findAll();
         List<UserDto> userDtos = new ArrayList<UserDto>();
+        LOGGER.info("info ");
+        LOGGER.debug("debug");
 
         for (User user: users) {
             userDtos.add(modalMapper.map(user, UserDto.class));
